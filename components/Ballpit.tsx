@@ -237,48 +237,48 @@ function isOverRect(rect: DOMRect) {
 }
 function onPointerMove(e: PointerEvent) {
   globalPointer.set(e.clientX, e.clientY);
-  for (const [el, s] of pointerMap) {
+  pointerMap.forEach((s, el) => {
     const r = el.getBoundingClientRect();
     if (isOverRect(r)) {
       updatePointer(s, r);
       if (!s.hover) { s.hover = true; s.onEnter(s); }
       s.onMove(s);
     } else if (s.hover && !s.touching) { s.hover = false; s.onLeave(s); }
-  }
+  });
 }
 function onPointerLeave() {
-  for (const s of pointerMap.values()) { if (s.hover) { s.hover = false; s.onLeave(s); } }
+  pointerMap.forEach(s => { if (s.hover) { s.hover = false; s.onLeave(s); } });
 }
 function onPointerClick(e: MouseEvent) {
   globalPointer.set(e.clientX, e.clientY);
-  for (const [el, s] of pointerMap) {
+  pointerMap.forEach((s, el) => {
     const r = el.getBoundingClientRect();
     updatePointer(s, r);
     if (isOverRect(r)) s.onClick(s);
-  }
+  });
 }
 function onTouchStart(e: TouchEvent) {
   if (!e.touches.length) return;
   e.preventDefault();
   globalPointer.set(e.touches[0].clientX, e.touches[0].clientY);
-  for (const [el, s] of pointerMap) {
+  pointerMap.forEach((s, el) => {
     const r = el.getBoundingClientRect();
     if (isOverRect(r)) { s.touching = true; updatePointer(s, r); if (!s.hover) { s.hover = true; s.onEnter(s); } s.onMove(s); }
-  }
+  });
 }
 function onTouchMove(e: TouchEvent) {
   if (!e.touches.length) return;
   e.preventDefault();
   globalPointer.set(e.touches[0].clientX, e.touches[0].clientY);
-  for (const [el, s] of pointerMap) {
+  pointerMap.forEach((s, el) => {
     const r = el.getBoundingClientRect();
     updatePointer(s, r);
     if (isOverRect(r)) { if (!s.hover) { s.hover = true; s.touching = true; s.onEnter(s); } s.onMove(s); }
     else if (s.hover && s.touching) s.onMove(s);
-  }
+  });
 }
 function onTouchEnd() {
-  for (const s of pointerMap.values()) { if (s.touching) { s.touching = false; if (s.hover) { s.hover = false; s.onLeave(s); } } }
+  pointerMap.forEach(s => { if (s.touching) { s.touching = false; if (s.hover) { s.hover = false; s.onLeave(s); } } });
 }
 
 // ─── Physics ──────────────────────────────────────────────────────────────────
