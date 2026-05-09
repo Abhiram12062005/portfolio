@@ -186,6 +186,10 @@ const globalPointer = new Vector2();
 let listenersAdded = false;
 
 function createPointer(opts: any) {
+  // When enableTouch is false, touch listeners that call e.preventDefault()
+  // are never registered, so native scroll is never blocked.
+  const enableTouch = opts.enableTouch !== false;
+
   const state = {
     position: new Vector2(),
     nPosition: new Vector2(),
@@ -203,10 +207,12 @@ function createPointer(opts: any) {
     document.body.addEventListener('pointermove', onPointerMove);
     document.body.addEventListener('pointerleave', onPointerLeave);
     document.body.addEventListener('click', onPointerClick);
-    document.body.addEventListener('touchstart', onTouchStart, { passive: false });
-    document.body.addEventListener('touchmove', onTouchMove, { passive: false });
-    document.body.addEventListener('touchend', onTouchEnd, { passive: false });
-    document.body.addEventListener('touchcancel', onTouchEnd, { passive: false });
+    if (enableTouch) {
+      document.body.addEventListener('touchstart', onTouchStart, { passive: false });
+      document.body.addEventListener('touchmove', onTouchMove, { passive: false });
+      document.body.addEventListener('touchend', onTouchEnd, { passive: false });
+      document.body.addEventListener('touchcancel', onTouchEnd, { passive: false });
+    }
     listenersAdded = true;
   }
   state.dispose = () => {
@@ -215,10 +221,12 @@ function createPointer(opts: any) {
       document.body.removeEventListener('pointermove', onPointerMove);
       document.body.removeEventListener('pointerleave', onPointerLeave);
       document.body.removeEventListener('click', onPointerClick);
-      document.body.removeEventListener('touchstart', onTouchStart);
-      document.body.removeEventListener('touchmove', onTouchMove);
-      document.body.removeEventListener('touchend', onTouchEnd);
-      document.body.removeEventListener('touchcancel', onTouchEnd);
+      if (enableTouch) {
+        document.body.removeEventListener('touchstart', onTouchStart);
+        document.body.removeEventListener('touchmove', onTouchMove);
+        document.body.removeEventListener('touchend', onTouchEnd);
+        document.body.removeEventListener('touchcancel', onTouchEnd);
+      }
       listenersAdded = false;
     }
   };
@@ -507,7 +515,9 @@ class InstancedSpheres extends InstancedMesh {
     this.physics.update(e);
     for (let i = 0; i < this.count; i++) {
       _dummy.position.fromArray(this.physics.positionData, 3 * i);
-      _dummy.scale.setScalar(i === 0 && !this.config.followCursor ? 0 : this.physics.sizeData[i]);
+      // sphere0 is always invisible — it's a ghost attractor that pushes
+      // other balls without appearing on screen itself.
+      _dummy.scale.setScalar(i === 0 ? 0 : this.physics.sizeData[i]);
       _dummy.updateMatrix();
       this.setMatrixAt(i, _dummy.matrix);
       if (i === 0) this.light.position.copy(_dummy.position);
@@ -528,24 +538,45 @@ function createBallpit(canvas: HTMLCanvasElement, opts: any = {}) {
   let spheres: InstancedSpheres;
   let paused = false;
 
+  // ── `pointer: coarse` = finger/touch input (phones & tablets).
+  // `pointer: fine` = mouse (laptops & desktops).
+  // This is more reliable than screen-width breakpoints because it reflects
+  // actual input hardware, not just viewport size.
+  const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+
+  // Cursor-follow is active only on fine-pointer (mouse) devices,
+  // regardless of what the followCursor prop says.
+  const followCursor = opts.followCursor !== false && !isTouchDevice;
+
+  if (isTouchDevice) {
+    // Make the canvas purely decorative on mobile — pointer events pass
+    // straight through to the page so scroll is never interrupted.
+    canvas.style.pointerEvents = 'none';
+  } else {
+    // Desktop: claim touch-action so the cursor tracking raycaster works cleanly.
+    canvas.style.touchAction = 'none';
+    canvas.style.userSelect = 'none';
+  }
+
   const raycaster = new Raycaster();
   const plane = new Plane(new Vector3(0, 0, 1), 0);
   const hit = new Vector3();
 
-  canvas.style.touchAction = 'none';
-  canvas.style.userSelect = 'none';
-
   function init(config: any) {
     if (spheres) { app.clear(); app.scene.remove(spheres); }
-    spheres = new InstancedSpheres(app.renderer, config);
+    spheres = new InstancedSpheres(app.renderer, { ...config, followCursor });
     app.scene.add(spheres);
   }
 
   init(opts);
 
+  // Touch event listeners (which call e.preventDefault) are only registered
+  // on desktop. On mobile they're skipped entirely so scroll is never blocked.
   const pointer = createPointer({
     domElement: canvas,
+    enableTouch: !isTouchDevice,
     onMove() {
+      if (!followCursor) return;
       raycaster.setFromCamera(pointer.nPosition, app.camera);
       app.camera.getWorldDirection(plane.normal);
       raycaster.ray.intersectPlane(plane, hit);

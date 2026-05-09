@@ -29,6 +29,34 @@ body {
   overflow-x: hidden;
 }
 
+/* Fullscreen video styling */
+video:-webkit-full-screen,
+video:fullscreen,
+div:-webkit-full-screen video,
+div:fullscreen video {
+  background: #0a0a0a;
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+/* Hide cursor in fullscreen for cleaner look (optional) */
+div:-webkit-full-screen,
+div:fullscreen {
+  cursor: none;
+}
+div:-webkit-full-screen:hover,
+div:fullscreen:hover {
+  cursor: default;
+}
+
+/* Smooth transitions */
+video {
+  transition: transform 0.15s ease;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 4px;
@@ -93,6 +121,20 @@ canvas {
 .parallax-container {
   overflow: hidden;
   position: relative;
+}
+
+/* Fullscreen video styling */
+video:-webkit-full-screen,
+video:fullscreen {
+  background: #0a0a0a;
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+/* Optional: Smooth transition for fullscreen */
+video {
+  transition: transform 0.2s ease;
 }
 
 /* Hero text animation */

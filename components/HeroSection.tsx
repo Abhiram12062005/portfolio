@@ -31,12 +31,16 @@ export default function HeroSection() {
           style={{ opacity: ballpitOpacity }}
           className="absolute inset-0 z-0"
         >
+          {/*
+            followCursor defaults to true — Ballpit.tsx auto-detects touch
+            devices via `pointer: coarse` and disables cursor interactivity
+            (+ scroll-blocking) on mobile/tablet automatically.
+          */}
           <Ballpit
             count={120}
             gravity={0.012}
             friction={0.9975}
             wallBounce={0.95}
-            followCursor={false}
             colors={[0xc8846a, 0x7a3a20, 0x1a1a1a, 0x0d0d0d, 0x7a9e7e, 0x3a2a1a]}
           />
         </motion.div>

@@ -53,7 +53,7 @@ export default function AboutSection() {
                 <div className="font-mono text-xs text-clay/30 text-left space-y-2 leading-relaxed">
                   <div><span className="text-sage/50">const</span> <span className="text-clay/60">developer</span> = {"{"}</div>
                   <div className="pl-4"><span className="text-bone/30">name:</span> <span className="text-clay/50">'Putta Abhiram'</span>,</div>
-                  <div className="pl-4"><span className="text-bone/30">passion:</span> <span className="text-clay/50">'Application Developer + Entrepreneur'</span>,</div>
+                  <div className="pl-4"><span className="text-bone/30">passion:</span> <span className="text-clay/50">'AI Application Developer + Entrepreneur'</span>,</div>
                   <div className="pl-4"><span className="text-bone/30">tools:</span> [</div>
                   <div className="pl-8 text-clay/40">'React', 'Next.js','TypeScript'</div>
                   <div className="pl-8 text-clay/40">'JavaScript', 'Node.js', 'Three.js'</div>

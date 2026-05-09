@@ -4,31 +4,41 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 const skills = [
-  { name: "React.js", level: 95, category: "Frontend" },
-  { name: "Next.js", level: 95, category: "Frontend" },
-  { name: "Three.js / WebGL", level: 65, category: "3D / Motion" },
-  { name: "TypeScript", level: 85, category: "Language" },
-  { name: "JavaScript", level: 95, category: "Language" },
-  { name: "Framer Motion", level: 80, category: "Animation" },
-  { name: "Node.js / Express", level: 82, category: "Backend" },
-  { name: "UI/UX Design", level: 92, category: "Design" },
-  { name: "TailwindCSS", level: 96, category: "Styling" },
-  { name: "PostgreSQL / MongoDB", level: 78, category: "Database" },
-  { name: "Python", level: 85, category: "Language" },
-  { name: "Java", level: 82, category: "Language" },
-  { name: "C++", level: 88, category: "Language" },
-  { name: "Flutter", level: 70, category: "FrameWork" },
+  // AI / ML
+  { name: "PyTorch", level: 90, category: "AI / ML" },
+  { name: "LLM Fine-Tuning (QLoRA / PEFT)", level: 88, category: "AI / ML" },
+  { name: "Computer Vision (YOLOv8)", level: 87, category: "AI / ML" },
+  { name: "Deep Learning (DenseNet / CNN)", level: 85, category: "AI / ML" },
+  { name: "Hugging Face Transformers", level: 86, category: "AI / ML" },
+  { name: "scikit-learn / Pandas / NumPy", level: 88, category: "AI / ML" },
+
+  // Backend & APIs
+  { name: "Python / FastAPI", level: 88, category: "Backend" },
+  { name: "Node.js / Express.js", level: 84, category: "Backend" },
+  { name: "REST API Design", level: 87, category: "Backend" },
+  { name: "JWT Authentication", level: 85, category: "Backend" },
+
+  // Frontend
+  { name: "React.js / Next.js", level: 90, category: "Frontend" },
+  { name: "TailwindCSS", level: 92, category: "Frontend" },
+  { name: "TypeScript / JavaScript", level: 88, category: "Frontend" },
+  { name: "Framer Motion", level: 80, category: "Frontend" },
+
+  // Data & Databases
+  { name: "MongoDB", level: 83, category: "Database" },
+  { name: "Power BI / Data Visualization", level: 82, category: "Analytics" },
 ];
 
 const techStack = [
-  "React", "Next.js", "TypeScript", "Three.js", "GSAP", "Framer Motion",
-  "Node.js", "Python", "PostgreSQL", "MongoDB", "Docker", "AWS", "Flutter",
-  "Figma", "Blender", "WebGL", "TailwindCSS", "GraphQL", "Redis", "Dart"
+  "PyTorch", "QLoRA", "PEFT", "YOLOv8", "Hugging Face", "FastAPI",
+  "DenseNet121", "TinyLlama", "BiFPN", "SPD-Conv", "Focal Loss",
+  "React.js", "Next.js", "Node.js", "MongoDB", "PostgreSQL",
+  "TailwindCSS", "TypeScript", "Framer Motion", "Power BI",
+  "scikit-learn", "Pandas", "NumPy", "JWT", "REST API",
 ];
 
 export default function SkillsSection() {
   const ref = useRef<HTMLDivElement>(null);
-  const marqueeRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -41,8 +51,10 @@ export default function SkillsSection() {
   return (
     <section id="skills" ref={ref} className="relative py-40 overflow-hidden bg-charcoal/30">
       {/* Background */}
-      <div className="absolute inset-0"
-        style={{ background: "linear-gradient(180deg, #0d0d0d 0%, #111111 50%, #0d0d0d 100%)" }} />
+      <div
+        className="absolute inset-0"
+        style={{ background: "linear-gradient(180deg, #0d0d0d 0%, #111111 50%, #0d0d0d 100%)" }}
+      />
 
       <div className="relative max-w-7xl mx-auto px-8 md:px-20 mb-24">
         <motion.div
@@ -68,11 +80,13 @@ export default function SkillsSection() {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.07, duration: 0.7 }}
+              transition={{ delay: i * 0.06, duration: 0.7 }}
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3">
-                  <span className="font-mono text-[10px] text-clay/60 uppercase tracking-wider">{skill.category}</span>
+                  <span className="font-mono text-[10px] text-clay/60 uppercase tracking-wider">
+                    {skill.category}
+                  </span>
                   <span className="w-1 h-1 rounded-full bg-clay/30" />
                   <span className="font-sans text-sm text-bone">{skill.name}</span>
                 </div>
@@ -83,7 +97,7 @@ export default function SkillsSection() {
                   initial={{ width: 0 }}
                   whileInView={{ width: `${skill.level}%` }}
                   viewport={{ once: true }}
-                  transition={{ duration: 1.2, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 1.2, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
                   className="absolute inset-y-0 left-0"
                   style={{ background: `linear-gradient(90deg, #c8846a, #c8846a88)` }}
                 />
